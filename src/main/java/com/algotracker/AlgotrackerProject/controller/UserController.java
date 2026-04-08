@@ -9,7 +9,6 @@ import com.algotracker.AlgotrackerProject.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +29,7 @@ public class UserController {
 
         User user = userService.postUser(userRequestDto);
         UserResponseDto userResponseDto = userMapper.toDto(user);
-        return ResponseEntity.status(HttpStatusCode.valueOf(201))
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(true, "User created successfully", userResponseDto));
 
 
@@ -63,7 +62,7 @@ public class UserController {
     ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable int userId) {
 
         userService.deleteUser(userId);
-        return ResponseEntity.ok(new ApiResponse<>(true, null, "User deleted successfully"));
+        return ResponseEntity.ok(new ApiResponse<>(true, "User deleted successfully", null));
 
     }
 
