@@ -3,17 +3,21 @@ package com.algotracker.AlgotrackerProject.controller;
 import com.algotracker.AlgotrackerProject.common.ApiResponse;
 import com.algotracker.AlgotrackerProject.dto.UserRequestDto;
 import com.algotracker.AlgotrackerProject.dto.UserResponseDto;
+import com.algotracker.AlgotrackerProject.dto.UserUpdateRequestDto;
 import com.algotracker.AlgotrackerProject.mapper.UserMapper;
 import com.algotracker.AlgotrackerProject.model.User;
 import com.algotracker.AlgotrackerProject.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -36,7 +40,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    ResponseEntity<ApiResponse<UserResponseDto>> getUser(@PathVariable int userId) {
+    ResponseEntity<ApiResponse<UserResponseDto>> getUser(@PathVariable @Min(1) Long userId) {
 
         User user = userService.getUser(userId);
         UserResponseDto userResponseDto = userMapper.toDto(user);
@@ -59,11 +63,18 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable int userId) {
+    ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable @Min(1) Long userId) {
 
         userService.deleteUser(userId);
         return ResponseEntity.ok(new ApiResponse<>(true, "User deleted successfully", null));
 
+    }
+
+    @PutMapping("/{userId")
+    ResponseEntity<ApiResponse<String>> updateUser(@PathVariable @Min(1) Long userId,
+                                                   @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+        userService.updateUser(userId, userUpdateRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User updated successfully", null));
     }
 
 }

@@ -1,0 +1,7 @@
+package com.algotracker.AlgotrackerProject.exceptions;
+
+public class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+}
