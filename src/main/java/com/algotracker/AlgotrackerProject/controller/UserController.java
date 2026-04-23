@@ -1,11 +1,15 @@
 package com.algotracker.AlgotrackerProject.controller;
 
 import com.algotracker.AlgotrackerProject.common.ApiResponse;
+import com.algotracker.AlgotrackerProject.dto.UserProblemSolvedResponseDto;
 import com.algotracker.AlgotrackerProject.dto.UserRequestDto;
 import com.algotracker.AlgotrackerProject.dto.UserResponseDto;
 import com.algotracker.AlgotrackerProject.dto.UserUpdateRequestDto;
 import com.algotracker.AlgotrackerProject.mapper.UserMapper;
+import com.algotracker.AlgotrackerProject.mapper.UserProblemMapper;
 import com.algotracker.AlgotrackerProject.model.User;
+import com.algotracker.AlgotrackerProject.model.UserProblem;
+import com.algotracker.AlgotrackerProject.service.UserProblemService;
 import com.algotracker.AlgotrackerProject.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -27,6 +31,12 @@ public class UserController {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    UserProblemService userProblemService;
+
+    @Autowired
+    UserProblemMapper userProblemMapper;
 
     @PostMapping
     ResponseEntity<ApiResponse<UserResponseDto>> postUser(@Valid @RequestBody UserRequestDto userRequestDto) {
@@ -75,6 +85,21 @@ public class UserController {
                                                    @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
         userService.updateUser(userId, userUpdateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User updated successfully", null));
+    }
+
+    @GetMapping("/{userId}/problems")
+    ResponseEntity<ApiResponse<List<UserProblemSolvedResponseDto>>> getProblemsByUser(@PathVariable Long userId) {
+        List<UserProblem> problemList = userProblemService.getProblemsByUser(userId);
+
+        List<UserProblemSolvedResponseDto> userProblemSolvedResponseDtoList =
+                problemList.stream().map((userProblem) -> userProblemMapper.toUserProblemSolvedResponseDto(userProblem))
+                        .toList();
+
+        ApiResponse<List<UserProblemSolvedResponseDto>> listApiResponse =
+                new ApiResponse<>(true, "Problems fetched successfully", userProblemSolvedResponseDtoList);
+
+        return ResponseEntity.status(HttpStatus.OK).body(listApiResponse);
+
     }
 
 }
