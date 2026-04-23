@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Map<String, String>>> handleInvalidArgs(
             MethodArgumentNotValidException exception) {
         Map<String, String> errorMap = new HashMap<>();
-
+        
         exception.getBindingResult().getFieldErrors()
                 .forEach(error -> errorMap.put(error.getField(), error.getDefaultMessage()));
         ApiResponse<Map<String, String>> apiResponse =
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleUserNotFound(UserNotFoundException exception) {
-        ApiResponse<Object> apiResponse = new ApiResponse<Object>(false, exception.getMessage(), null);
+        ApiResponse<Object> apiResponse = new ApiResponse<>(false, exception.getMessage(), null);
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
     }
@@ -57,6 +57,19 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> response = new ApiResponse<>(false, message, null);
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(ProblemNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleProblemNotFound(ProblemNotFoundException exception) {
+        ApiResponse<Object> apiResponse = new ApiResponse<>(false, exception.getMessage(), null);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+    }
+
+    @ExceptionHandler(UserProblemAlreadyExists.class)
+    public ResponseEntity<ApiResponse<Object>> handleUserProblemExists(UserProblemAlreadyExists ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 
 }
