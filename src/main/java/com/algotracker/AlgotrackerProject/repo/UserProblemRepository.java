@@ -15,4 +15,6 @@ public interface UserProblemRepository extends JpaRepository<UserProblem, Long> 
     boolean existsByUser_UserIdAndProblem_ProblemId(@NotNull Long userId, @NotNull Long problemId);
 
     List<UserProblem> findByUser_UserId(Long userId);
+
+    List<UserProblem> findByProblem_ProblemId(Long problemId);
 }

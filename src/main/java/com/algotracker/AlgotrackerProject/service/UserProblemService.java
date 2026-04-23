@@ -62,4 +62,12 @@ public class UserProblemService {
         return userProblemRepository.findByUser_UserId(userId);
 
     }
+
+    public List<UserProblem> getUsersByProblem(Long problemId) {
+        if (!problemRepository.existsById(problemId)) {
+            throw new ProblemNotFoundException("Problem not found");
+        }
+
+        return userProblemRepository.findByProblem_ProblemId(problemId);
+    }
 }

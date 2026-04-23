@@ -3,6 +3,7 @@ package com.algotracker.AlgotrackerProject.mapper;
 import com.algotracker.AlgotrackerProject.dto.UserProblemRequestDto;
 import com.algotracker.AlgotrackerProject.dto.UserProblemResponseDto;
 import com.algotracker.AlgotrackerProject.dto.UserProblemSolvedResponseDto;
+import com.algotracker.AlgotrackerProject.dto.UsersWhoSolvedProblemResponseDto;
 import com.algotracker.AlgotrackerProject.model.Problem;
 import com.algotracker.AlgotrackerProject.model.User;
 import com.algotracker.AlgotrackerProject.model.UserProblem;
@@ -47,5 +48,16 @@ public class UserProblemMapper {
         userProblemSolvedResponseDto.setStatus(userProblem.getStatus());
 
         return userProblemSolvedResponseDto;
+    }
+
+    public UsersWhoSolvedProblemResponseDto toUsersWhoSolvedProblemResponseDto(UserProblem userProblem) {
+        UsersWhoSolvedProblemResponseDto usersWhoSolvedProblemResponseDto = new UsersWhoSolvedProblemResponseDto();
+
+        usersWhoSolvedProblemResponseDto.setUserId(userProblem.getUser().getUserId());
+        usersWhoSolvedProblemResponseDto.setUserName(userProblem.getUser().getName());
+        usersWhoSolvedProblemResponseDto.setUserProblemStatus(userProblem.getStatus());
+        usersWhoSolvedProblemResponseDto.setSolvedAt(userProblem.getSolvedAt());
+
+        return usersWhoSolvedProblemResponseDto;
     }
 }

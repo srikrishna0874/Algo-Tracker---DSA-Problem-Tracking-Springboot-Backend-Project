@@ -80,15 +80,16 @@ public class UserController {
 
     }
 
-    @PutMapping("/{userId")
+    @PutMapping("/{userId}")
     ResponseEntity<ApiResponse<String>> updateUser(@PathVariable @Min(1) Long userId,
-                                                   @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+                                                   @Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
         userService.updateUser(userId, userUpdateRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User updated successfully", null));
     }
 
     @GetMapping("/{userId}/problems")
-    ResponseEntity<ApiResponse<List<UserProblemSolvedResponseDto>>> getProblemsByUser(@PathVariable Long userId) {
+    ResponseEntity<ApiResponse<List<UserProblemSolvedResponseDto>>> getProblemsByUser(
+            @PathVariable @Min(1) Long userId) {
         List<UserProblem> problemList = userProblemService.getProblemsByUser(userId);
 
         List<UserProblemSolvedResponseDto> userProblemSolvedResponseDtoList =
