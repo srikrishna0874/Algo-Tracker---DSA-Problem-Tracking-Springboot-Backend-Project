@@ -25,6 +25,7 @@ public class ProblemController {
     @Autowired
     private UserProblemMapper userProblemMapper;
 
+
     @GetMapping("/{problemId}/users")
     public ResponseEntity<ApiResponse<PageResponse<UsersWhoSolvedProblemResponseDto>>> getUsersByProblem(
             @PathVariable @Min(1) Long problemId,

@@ -7,6 +7,7 @@ import com.algotracker.AlgotrackerProject.mapper.UserProblemMapper;
 import com.algotracker.AlgotrackerProject.model.Problem;
 import com.algotracker.AlgotrackerProject.model.User;
 import com.algotracker.AlgotrackerProject.model.UserProblem;
+import com.algotracker.AlgotrackerProject.model.UserProblemStatus;
 import com.algotracker.AlgotrackerProject.repo.ProblemRepository;
 import com.algotracker.AlgotrackerProject.repo.UserProblemRepository;
 import com.algotracker.AlgotrackerProject.repo.UserRepository;
@@ -14,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserProblemService {
@@ -55,7 +59,7 @@ public class UserProblemService {
         return userProblemRepository.save(userProblem);
     }
 
-    public Page<UserProblem> getProblemsByUser(Long userId, int page, int size) {
+    public Page<UserProblem> getProblemsByUser(Long userId, int page, int size, UserProblemStatus status, String sort) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User not found");
         }
@@ -64,7 +68,39 @@ public class UserProblemService {
             throw new IllegalArgumentException("Invalid pagination params");
         }
 
-        Pageable pageable = PageRequest.of(page, size);
+        if (sort == null || sort.isBlank()) {
+            Pageable pageable = PageRequest.of(page, size);
+
+            if (status != null) {
+                return userProblemRepository.findByUser_UserIdAndStatus(userId, status, pageable);
+            }
+            return userProblemRepository.findByUser_UserId(userId, pageable);
+        }
+
+        String[] sortParams = sort.split(",");
+
+        if (sortParams.length != 2) {
+            throw new IllegalArgumentException("Invalid sort format. Use field,direction");
+        }
+
+        String field = sortParams[0],
+                direction = sortParams[1];
+
+        boolean isDescending = direction.equalsIgnoreCase("desc");
+
+        List<String> allowedFields = List.of("solvedAt", "status");
+
+        if (!allowedFields.contains(field)) {
+            throw new IllegalArgumentException("Invalid sort field");
+        }
+
+        Sort sortObj = isDescending ? Sort.by(field).descending() : Sort.by(field).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sortObj);
+
+        if (status != null) {
+            return userProblemRepository.findByUser_UserIdAndStatus(userId, status, pageable);
+        }
 
         return userProblemRepository.findByUser_UserId(userId, pageable);
 

@@ -10,6 +10,7 @@ import com.algotracker.AlgotrackerProject.mapper.UserMapper;
 import com.algotracker.AlgotrackerProject.mapper.UserProblemMapper;
 import com.algotracker.AlgotrackerProject.model.User;
 import com.algotracker.AlgotrackerProject.model.UserProblem;
+import com.algotracker.AlgotrackerProject.model.UserProblemStatus;
 import com.algotracker.AlgotrackerProject.service.UserProblemService;
 import com.algotracker.AlgotrackerProject.service.UserService;
 import jakarta.validation.Valid;
@@ -89,12 +90,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "User updated successfully", null));
     }
 
+    //GET /users/{id}/problems?page=0&size=10&status=SOLVED&sort=solvedAt,desc
     @GetMapping("/{userId}/problems")
     ResponseEntity<ApiResponse<PageResponse<UserProblemSolvedResponseDto>>> getProblemsByUser(
             @PathVariable @Min(1) Long userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<UserProblem> problemList = userProblemService.getProblemsByUser(userId, page, size);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) UserProblemStatus status,
+            @RequestParam(required = false) String sort
+    ) {
+        Page<UserProblem> problemList = userProblemService.getProblemsByUser(userId, page, size, status, sort);
 
 
         List<UserProblemSolvedResponseDto> userProblemSolvedResponseDtoList =
