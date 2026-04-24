@@ -2,10 +2,10 @@ package com.algotracker.AlgotrackerProject.repo;
 
 import com.algotracker.AlgotrackerProject.model.UserProblem;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface UserProblemRepository extends JpaRepository<UserProblem, Long> {
@@ -14,7 +14,7 @@ public interface UserProblemRepository extends JpaRepository<UserProblem, Long> 
 
     boolean existsByUser_UserIdAndProblem_ProblemId(@NotNull Long userId, @NotNull Long problemId);
 
-    List<UserProblem> findByUser_UserId(Long userId);
+    Page<UserProblem> findByUser_UserId(Long userId, Pageable pageable);
 
-    List<UserProblem> findByProblem_ProblemId(Long problemId);
+    Page<UserProblem> findByProblem_ProblemId(Long problemId, Pageable pageable);
 }

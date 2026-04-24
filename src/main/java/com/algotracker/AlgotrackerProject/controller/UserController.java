@@ -1,6 +1,7 @@
 package com.algotracker.AlgotrackerProject.controller;
 
 import com.algotracker.AlgotrackerProject.common.ApiResponse;
+import com.algotracker.AlgotrackerProject.common.PageResponse;
 import com.algotracker.AlgotrackerProject.dto.UserProblemSolvedResponseDto;
 import com.algotracker.AlgotrackerProject.dto.UserRequestDto;
 import com.algotracker.AlgotrackerProject.dto.UserResponseDto;
@@ -14,6 +15,7 @@ import com.algotracker.AlgotrackerProject.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -88,18 +90,28 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/problems")
-    ResponseEntity<ApiResponse<List<UserProblemSolvedResponseDto>>> getProblemsByUser(
-            @PathVariable @Min(1) Long userId) {
-        List<UserProblem> problemList = userProblemService.getProblemsByUser(userId);
+    ResponseEntity<ApiResponse<PageResponse<UserProblemSolvedResponseDto>>> getProblemsByUser(
+            @PathVariable @Min(1) Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<UserProblem> problemList = userProblemService.getProblemsByUser(userId, page, size);
+
 
         List<UserProblemSolvedResponseDto> userProblemSolvedResponseDtoList =
-                problemList.stream().map((userProblem) -> userProblemMapper.toUserProblemSolvedResponseDto(userProblem))
+                problemList.getContent().stream()
+                        .map((userProblem -> userProblemMapper.toUserProblemSolvedResponseDto(userProblem)))
                         .toList();
 
-        ApiResponse<List<UserProblemSolvedResponseDto>> listApiResponse =
-                new ApiResponse<>(true, "Problems fetched successfully", userProblemSolvedResponseDtoList);
+        PageResponse<UserProblemSolvedResponseDto> pageResponse =
+                new PageResponse<>(userProblemSolvedResponseDtoList, problemList.getNumber(), problemList.getSize(),
+                        problemList.getTotalElements(), problemList.getTotalPages());
 
-        return ResponseEntity.status(HttpStatus.OK).body(listApiResponse);
+
+        ApiResponse<PageResponse<UserProblemSolvedResponseDto>> apiResponse =
+                new ApiResponse<>(true, "Problems solved by the user fetched successfully",
+                        pageResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
 
     }
 

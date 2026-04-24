@@ -11,9 +11,10 @@ import com.algotracker.AlgotrackerProject.repo.ProblemRepository;
 import com.algotracker.AlgotrackerProject.repo.UserProblemRepository;
 import com.algotracker.AlgotrackerProject.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserProblemService {
@@ -54,20 +55,29 @@ public class UserProblemService {
         return userProblemRepository.save(userProblem);
     }
 
-    public List<UserProblem> getProblemsByUser(Long userId) {
+    public Page<UserProblem> getProblemsByUser(Long userId, int page, int size) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User not found");
         }
 
-        return userProblemRepository.findByUser_UserId(userId);
+        if (page < 0 || size <= 0) {
+            throw new IllegalArgumentException("Invalid pagination params");
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return userProblemRepository.findByUser_UserId(userId, pageable);
 
     }
 
-    public List<UserProblem> getUsersByProblem(Long problemId) {
+    public Page<UserProblem> getUsersByProblem(Long problemId, int page, int size) {
         if (!problemRepository.existsById(problemId)) {
             throw new ProblemNotFoundException("Problem not found");
         }
 
-        return userProblemRepository.findByProblem_ProblemId(problemId);
+        Pageable pageable = PageRequest.of(page, size);
+
+
+        return userProblemRepository.findByProblem_ProblemId(problemId, pageable);
     }
 }
