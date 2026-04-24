@@ -25,11 +25,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Map<String, String>>> handleInvalidArgs(
             MethodArgumentNotValidException exception) {
         Map<String, String> errorMap = new HashMap<>();
-        
+
         exception.getBindingResult().getFieldErrors()
                 .forEach(error -> errorMap.put(error.getField(), error.getDefaultMessage()));
         ApiResponse<Map<String, String>> apiResponse =
-                new ApiResponse<Map<String, String>>(false, "Validation Failed", errorMap);
+                new ApiResponse<>(false, "Validation Failed", errorMap);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
     }
 

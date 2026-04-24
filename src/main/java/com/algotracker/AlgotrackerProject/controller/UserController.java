@@ -56,7 +56,7 @@ public class UserController {
         UserResponseDto userResponseDto = userMapper.toDto(user);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ApiResponse<UserResponseDto>(true, "User fetched successfully", userResponseDto));
+                .body(new ApiResponse<>(true, "User fetched successfully", userResponseDto));
 
 
     }
@@ -68,7 +68,7 @@ public class UserController {
         List<UserResponseDto> userResponseDtoList = userList.stream().map(userMapper::toDto).toList();
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ApiResponse<List<UserResponseDto>>(true, "Users fetched successfully", userResponseDtoList));
+                .body(new ApiResponse<>(true, "Users fetched successfully", userResponseDtoList));
 
     }
 

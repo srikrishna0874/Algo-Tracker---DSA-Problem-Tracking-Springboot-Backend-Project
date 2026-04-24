@@ -32,7 +32,7 @@ public class UserProblemController {
 
         UserProblemResponseDto userProblemResponseDto = userProblemMapper.toUserProblemResponseDto(userProblem);
         ApiResponse<UserProblemResponseDto> apiResponse =
-                new ApiResponse<UserProblemResponseDto>(true, "User Problem Created", userProblemResponseDto);
+                new ApiResponse<>(true, "User Problem Created", userProblemResponseDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
