@@ -5,6 +5,7 @@ import com.algotracker.AlgotrackerProject.common.PageResponse;
 import com.algotracker.AlgotrackerProject.dto.ProblemRequestDto;
 import com.algotracker.AlgotrackerProject.dto.ProblemResponseDto;
 import com.algotracker.AlgotrackerProject.dto.UsersWhoSolvedProblemResponseDto;
+import com.algotracker.AlgotrackerProject.mapper.ProblemMapper;
 import com.algotracker.AlgotrackerProject.mapper.UserProblemMapper;
 import com.algotracker.AlgotrackerProject.model.Problem;
 import com.algotracker.AlgotrackerProject.model.UserProblem;
@@ -30,12 +31,24 @@ public class ProblemController {
     @Autowired
     private UserProblemMapper userProblemMapper;
 
+    @Autowired
     private ProblemService problemService;
+
+    @Autowired
+    ProblemMapper problemMapper;
 
     @PostMapping
     public ResponseEntity<ApiResponse<ProblemResponseDto>> postProblem(
             @RequestBody @Valid ProblemRequestDto problemRequestDto) {
         Problem problem = problemService.postProblem(problemRequestDto);
+
+        ProblemResponseDto problemResponseDto = problemMapper.toDto(problem);
+
+        ApiResponse<ProblemResponseDto> apiResponse =
+                new ApiResponse<>(true, "Problem created successfully", problemResponseDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+
     }
 
     @GetMapping("/{problemId}/users")
