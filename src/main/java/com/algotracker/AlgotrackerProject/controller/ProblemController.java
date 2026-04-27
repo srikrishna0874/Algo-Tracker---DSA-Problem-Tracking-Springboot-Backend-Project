@@ -2,10 +2,15 @@ package com.algotracker.AlgotrackerProject.controller;
 
 import com.algotracker.AlgotrackerProject.common.ApiResponse;
 import com.algotracker.AlgotrackerProject.common.PageResponse;
+import com.algotracker.AlgotrackerProject.dto.ProblemRequestDto;
+import com.algotracker.AlgotrackerProject.dto.ProblemResponseDto;
 import com.algotracker.AlgotrackerProject.dto.UsersWhoSolvedProblemResponseDto;
 import com.algotracker.AlgotrackerProject.mapper.UserProblemMapper;
+import com.algotracker.AlgotrackerProject.model.Problem;
 import com.algotracker.AlgotrackerProject.model.UserProblem;
+import com.algotracker.AlgotrackerProject.service.ProblemService;
 import com.algotracker.AlgotrackerProject.service.UserProblemService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +30,13 @@ public class ProblemController {
     @Autowired
     private UserProblemMapper userProblemMapper;
 
+    private ProblemService problemService;
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<ProblemResponseDto>> postProblem(
+            @RequestBody @Valid ProblemRequestDto problemRequestDto) {
+        Problem problem = problemService.postProblem(problemRequestDto);
+    }
 
     @GetMapping("/{problemId}/users")
     public ResponseEntity<ApiResponse<PageResponse<UsersWhoSolvedProblemResponseDto>>> getUsersByProblem(
