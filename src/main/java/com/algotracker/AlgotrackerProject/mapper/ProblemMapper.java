@@ -1,6 +1,7 @@
 package com.algotracker.AlgotrackerProject.mapper;
 
 
+import com.algotracker.AlgotrackerProject.dto.ProblemRequestDto;
 import com.algotracker.AlgotrackerProject.dto.ProblemResponseDto;
 import com.algotracker.AlgotrackerProject.dto.TopicDto;
 import com.algotracker.AlgotrackerProject.model.Problem;
@@ -40,5 +41,17 @@ public class ProblemMapper {
 
         return problemResponseDto;
 
+    }
+
+    public Problem toEntity(ProblemRequestDto problemRequestDto, List<Topic> topics) {
+        Problem problem = new Problem();
+
+        problem.setTitle(problemRequestDto.getTitle());
+        problem.setDescription(problemRequestDto.getDescription());
+        problem.setDifficulty(problemRequestDto.getDifficulty());
+        problem.setLink(problemRequestDto.getLink());
+        problem.setTopics(topics);
+
+        return problem;
     }
 }

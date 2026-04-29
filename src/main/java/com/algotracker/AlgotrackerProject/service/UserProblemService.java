@@ -46,7 +46,7 @@ public class UserProblemService {
 
 //        if (userProblemRepository.existsByUser_UserIdAndProblem_ProblemId(userProblemRequestDto.getUserId(),
 //                userProblemRequestDto.getProblemId())) {
-//            throw new UserProblemAlreadyExists("User already submitted problem");
+//            throw new UserProblemAlreadyExistsException("User already submitted problem");
 //        }
 
         User user = userRepository.findById(userProblemRequestDto.getUserId())

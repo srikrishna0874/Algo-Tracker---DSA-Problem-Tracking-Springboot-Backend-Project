@@ -7,6 +7,7 @@ import com.algotracker.AlgotrackerProject.dto.ProblemResponseDto;
 import com.algotracker.AlgotrackerProject.dto.UsersWhoSolvedProblemResponseDto;
 import com.algotracker.AlgotrackerProject.mapper.ProblemMapper;
 import com.algotracker.AlgotrackerProject.mapper.UserProblemMapper;
+import com.algotracker.AlgotrackerProject.model.Difficulty;
 import com.algotracker.AlgotrackerProject.model.Problem;
 import com.algotracker.AlgotrackerProject.model.UserProblem;
 import com.algotracker.AlgotrackerProject.service.ProblemService;
@@ -49,6 +50,30 @@ public class ProblemController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
 
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<ProblemResponseDto>>> getAllProblems(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Difficulty difficulty,
+            @RequestParam(required = false) Long topicId,
+            @RequestParam(required = false) String sort
+    ) {
+        Page<Problem> problemPage = problemService.getProblems(page, size, sort);
+
+        List<ProblemResponseDto> problemResponseDtoList = problemPage.getContent().stream()
+                .map((problem -> problemMapper.toDto(problem)))
+                .toList();
+
+        PageResponse<ProblemResponseDto> pageResponse =
+                new PageResponse<>(problemResponseDtoList, problemPage.getNumber(), problemPage.getSize(),
+                        problemPage.getTotalElements(), problemPage.getTotalPages());
+
+        ApiResponse<PageResponse<ProblemResponseDto>> apiResponse =
+                new ApiResponse<>(true, "Problems found", pageResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping("/{problemId}/users")
