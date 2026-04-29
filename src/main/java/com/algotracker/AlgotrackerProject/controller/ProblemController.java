@@ -76,6 +76,39 @@ public class ProblemController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/{problemId}")
+    public ResponseEntity<ApiResponse<ProblemResponseDto>> getProblemById(@PathVariable @Min(1) Long problemId) {
+        Problem problem = problemService.getProblemById(problemId);
+        ProblemResponseDto problemResponseDto = problemMapper.toDto(problem);
+
+        ApiResponse<ProblemResponseDto> problemResponseDtoApiResponse =
+                new ApiResponse<>(true, "Problem found", problemResponseDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(problemResponseDtoApiResponse);
+    }
+
+    @PutMapping("/{problemId}")
+    public ResponseEntity<ApiResponse<ProblemResponseDto>> updateProblem(@PathVariable @Min(1) Long problemId,
+                                                                         @RequestBody
+                                                                         ProblemRequestDto problemRequestDto) {
+        Problem problem = problemService.updateProblem(problemId, problemRequestDto);
+        ProblemResponseDto problemResponseDto = problemMapper.toDto(problem);
+
+        ApiResponse<ProblemResponseDto> apiResponse =
+                new ApiResponse<>(true, "Problem updated", problemResponseDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @DeleteMapping("/problemId")
+    ResponseEntity<ApiResponse<Void>> deleteProblem(@PathVariable @Min(1) Long problemId) {
+        problemService.deleteProblemById(problemId);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(true, "Problem deleted successfully", null);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(apiResponse);
+    }
+
     @GetMapping("/{problemId}/users")
     public ResponseEntity<ApiResponse<PageResponse<UsersWhoSolvedProblemResponseDto>>> getUsersByProblem(
             @PathVariable @Min(1) Long problemId,

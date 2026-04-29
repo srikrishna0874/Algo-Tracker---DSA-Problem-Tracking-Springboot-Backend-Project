@@ -84,4 +84,10 @@ public class GlobalExceptionHandler {
                 .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 
+    @ExceptionHandler(ProblemInUseException.class)
+    public ResponseEntity<ApiResponse<Object>> handleProblemInUse(ProblemInUseException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
+    }
+
 }

@@ -2,6 +2,7 @@ package com.algotracker.AlgotrackerProject.repo;
 
 import com.algotracker.AlgotrackerProject.model.UserProblem;
 import com.algotracker.AlgotrackerProject.model.UserProblemStatus;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,4 +21,6 @@ public interface UserProblemRepository extends JpaRepository<UserProblem, Long> 
     Page<UserProblem> findByProblem_ProblemId(Long problemId, Pageable pageable);
 
     Page<UserProblem> findByUser_UserIdAndStatus(Long userId, UserProblemStatus status, Pageable pageable);
+
+    boolean existsByProblem_ProblemId(@Min(1) Long problemId);
 }

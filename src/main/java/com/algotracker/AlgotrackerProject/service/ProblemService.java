@@ -2,13 +2,17 @@ package com.algotracker.AlgotrackerProject.service;
 
 import com.algotracker.AlgotrackerProject.dto.ProblemRequestDto;
 import com.algotracker.AlgotrackerProject.exceptions.ProblemAlreadyExistsException;
+import com.algotracker.AlgotrackerProject.exceptions.ProblemInUseException;
+import com.algotracker.AlgotrackerProject.exceptions.ProblemNotFoundException;
 import com.algotracker.AlgotrackerProject.exceptions.TopicNotFoundException;
 import com.algotracker.AlgotrackerProject.mapper.ProblemMapper;
 import com.algotracker.AlgotrackerProject.model.Problem;
 import com.algotracker.AlgotrackerProject.model.Topic;
 import com.algotracker.AlgotrackerProject.repo.ProblemRepository;
 import com.algotracker.AlgotrackerProject.repo.TopicRepository;
+import com.algotracker.AlgotrackerProject.repo.UserProblemRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +30,9 @@ public class ProblemService {
 
     @Autowired
     private TopicRepository topicRepository;
+
+    @Autowired
+    private UserProblemRepository userProblemRepository;
 
     @Autowired
     private ProblemMapper problemMapper;
@@ -57,6 +64,12 @@ public class ProblemService {
             throw new IllegalArgumentException("Invalid pagination params");
         }
 
+        if (sort == null || sort.isBlank()) {
+            Pageable pageable = PageRequest.of(page, size);
+
+            return problemRepository.findAll(pageable);
+        }
+
         String[] sortParams = sort.split(",");
 
         if (sortParams.length != 2) {
@@ -73,5 +86,47 @@ public class ProblemService {
         Pageable pageable = PageRequest.of(page, size, sortObj);
 
         return problemRepository.findAll(pageable);
+    }
+
+    public Problem getProblemById(Long problemId) {
+
+        return problemRepository.findById(problemId)
+                .orElseThrow(() -> new ProblemNotFoundException("Problem with id: " + problemId + " not found!"));
+    }
+
+    public Problem updateProblem(@Min(1) Long problemId, ProblemRequestDto problemRequestDto) {
+        if (!problemRepository.existsById(problemId)) {
+            throw new ProblemNotFoundException("Problem with id: " + problemId + " not found!");
+        }
+
+        if (problemRepository.existsByTitleOrLink(problemRequestDto.getTitle(), problemRequestDto.getLink())) {
+            throw new ProblemAlreadyExistsException("Problem already exists");
+        }
+
+        for (Long id : problemRequestDto.getTopicIds()) {
+            if (!topicRepository.existsById(id)) {
+                throw new TopicNotFoundException("Topic with id: " + id + " not found!");
+            }
+        }
+
+        List<Topic> topicList = topicRepository.findAllById(problemRequestDto.getTopicIds());
+
+        Problem problem = problemMapper.toEntity(problemRequestDto, topicList);
+
+        return problemRepository.save(problem);
+    }
+
+    public void deleteProblemById(@Min(1) Long problemId) {
+        if (!problemRepository.existsById(problemId)) {
+            throw new ProblemNotFoundException("Problem with id: " + problemId + " not found!");
+        }
+
+        if (userProblemRepository.existsByProblem_ProblemId(problemId)) {
+            throw new ProblemInUseException("Cannot delete problem because users have solved it");
+        }
+
+        problemRepository.deleteById(problemId);
+
+        
     }
 }
