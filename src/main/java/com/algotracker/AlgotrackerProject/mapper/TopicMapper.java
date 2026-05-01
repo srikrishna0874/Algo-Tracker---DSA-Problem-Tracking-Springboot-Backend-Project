@@ -2,16 +2,11 @@ package com.algotracker.AlgotrackerProject.mapper;
 
 import com.algotracker.AlgotrackerProject.dto.TopicDto;
 import com.algotracker.AlgotrackerProject.dto.TopicRequestDto;
+import com.algotracker.AlgotrackerProject.dto.TopicResponseDto;
 import com.algotracker.AlgotrackerProject.model.Topic;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.stereotype.Component;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Component
 public class TopicMapper {
 
     public TopicDto toDto(Topic topic) {
@@ -29,5 +24,14 @@ public class TopicMapper {
         topic.setName(topicRequestDto.getTopicName());
         topic.setDescription(topicRequestDto.getTopicDescription());
         return topic;
+    }
+
+    public TopicResponseDto toTopicResponseDto(Topic topic) {
+        TopicResponseDto topicResponseDto = new TopicResponseDto();
+
+        topicResponseDto.setTopicName(topic.getName());
+        topicResponseDto.setTopicDescription(topic.getDescription());
+
+        return topicResponseDto;
     }
 }

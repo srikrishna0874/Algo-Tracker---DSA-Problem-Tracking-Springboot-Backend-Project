@@ -7,7 +7,9 @@ import com.algotracker.AlgotrackerProject.dto.UsersWhoSolvedProblemResponseDto;
 import com.algotracker.AlgotrackerProject.model.Problem;
 import com.algotracker.AlgotrackerProject.model.User;
 import com.algotracker.AlgotrackerProject.model.UserProblem;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserProblemMapper {
 
     public UserProblem toEntity(UserProblemRequestDto userProblemRequestDto, User user, Problem problem) {

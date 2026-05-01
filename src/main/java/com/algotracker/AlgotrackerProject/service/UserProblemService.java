@@ -11,6 +11,7 @@ import com.algotracker.AlgotrackerProject.model.UserProblemStatus;
 import com.algotracker.AlgotrackerProject.repo.ProblemRepository;
 import com.algotracker.AlgotrackerProject.repo.UserProblemRepository;
 import com.algotracker.AlgotrackerProject.repo.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,6 +60,7 @@ public class UserProblemService {
         return userProblemRepository.save(userProblem);
     }
 
+    @Transactional
     public Page<UserProblem> getProblemsByUser(Long userId, int page, int size, UserProblemStatus status, String sort) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User not found");

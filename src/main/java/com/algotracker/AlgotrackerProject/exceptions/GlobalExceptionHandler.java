@@ -79,13 +79,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TopicNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleTopicExists(TopicNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleTopicNotFound(TopicNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 
     @ExceptionHandler(ProblemInUseException.class)
     public ResponseEntity<ApiResponse<Object>> handleProblemInUse(ProblemInUseException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(TopicAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTopicExists(TopicAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(TopicInUseException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTopicInUse(TopicInUseException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiResponse<>(false, ex.getMessage(), null));
     }

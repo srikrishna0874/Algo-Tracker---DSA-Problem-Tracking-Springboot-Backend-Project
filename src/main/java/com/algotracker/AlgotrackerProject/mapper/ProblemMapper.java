@@ -6,18 +6,12 @@ import com.algotracker.AlgotrackerProject.dto.ProblemResponseDto;
 import com.algotracker.AlgotrackerProject.dto.TopicDto;
 import com.algotracker.AlgotrackerProject.model.Problem;
 import com.algotracker.AlgotrackerProject.model.Topic;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Component
 public class ProblemMapper {
 
     @Autowired
